@@ -2,12 +2,12 @@ package org.softwire.training.bookish;
 
 import com.mysql.jdbc.JDBC4ClientInfoProvider;
 import org.jdbi.v3.core.Jdbi;
+import org.softwire.training.bookish.models.database.Accounts;
 import org.softwire.training.bookish.models.database.Book;
+import org.softwire.training.bookish.models.database.Loans;
 
 import java.sql.*;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
 
@@ -22,71 +22,37 @@ public class Main {
         Jdbi jdbi = Jdbi.create(connectionString);
 //        jdbcMethod(connectionString);
 //        jdbiMethod(connectionString);
-
-        System.out.println("Hi Librarian, what would you like to do today?  Add book (1) Delete book (2) View accounts (3): ");
         Scanner sc = new Scanner(System.in);
-        String input = sc.nextLine();
         Book bookHandling = new Book();
-        if (input.equals("1")){
-            bookHandling.addBook(sc,jdbi);
-        }else if (input.equals("2")){
-            bookHandling.deleteBook(sc,jdbi);
-        }else if (input.equals("3")){
-            printAccounts(sc,jdbi);
-        }
+        Accounts accountHandling = new Accounts();
+        Loans loanHandling = new Loans();
 
-    }
-
-    private static void printAccounts(Scanner sc,Jdbi jdbi){
-        List<Map<String,Object>> allAccounts = jdbi.withHandle(handle -> handle.createQuery("select * from accounts")
-                    .mapToMap()
-                    .list());
-        for (int i = 0; i <allAccounts.size();i++){
-            System.out.println(allAccounts.get(i));
-        }
-    }
-
-
-    private static void jdbcMethod(String connectionString) throws SQLException {
-        System.out.println("JDBC method...");
-
-        // TODO: print out the details of all the books (using JDBC)
-        // See this page for details: https://docs.oracle.com/javase/tutorial/jdbc/basics/processingsqlstatements.html
-
-        Connection con = DriverManager.getConnection(connectionString);
-
-        String query = "select * from accounts";
-        try (Statement stmt = con.createStatement()) {
-            ResultSet rs = stmt.executeQuery(query);
-            while (rs.next()) {
-                String accountName = rs.getString("accountName");
-                System.out.print(accountName);
+        while (true) {
+            System.out.println("Add book (1) Delete book (2) Edit book (3) View Books (4) View accounts (5)" +
+                    " Add Account (6) Edit Account (7) Check in/out a book (8) ");
+            String input = sc.nextLine();
+            if (input.equals("1")) {
+                bookHandling.addBook(sc, jdbi);
+            } else if (input.equals("2")) {
+                bookHandling.deleteBook(sc, jdbi);
+            } else if (input.equals("3")) {
+                bookHandling.editBook(sc, jdbi);
+            } else if (input.equals("4")) {
+                bookHandling.viewBooks(sc, jdbi);
+            } else if (input.equals("5")) {
+                accountHandling.printAccounts(sc, jdbi);
+            } else if (input.equals("6")) {
+                accountHandling.addAccount(sc, jdbi);
+            }else if (input.equals("7")) {
+                accountHandling.editAccount(sc, jdbi);
+            }else if (input.equals("8")){
+                loanHandling.bookChecking(sc,jdbi);
+            } else {
+                break;
             }
-        } catch (SQLException e) {
-            System.out.print(e);
+
         }
-
+        sc.close();
     }
 
-    private static void jdbiMethod(String connectionString) {
-        System.out.println("\nJDBI method...");
-
-        // TODO: print out the details of all the books (using JDBI)
-        // See this page for details: http://jdbi.org
-        // Use the "Book" class that we've created for you (in the models.database folder)
-
-        Jdbi jdbi = Jdbi.create(connectionString);
-        List<String> names = jdbi.withHandle(handle -> {
-                    handle.createQuery("select accountName from accounts")
-                            .mapTo(String.class)
-                            .list();
-                    handle.execute("INSERT INTO accounts(accountName,age) VALUES (?, ?)", "mick", 9);
-                    return null;
-        });
-
-        //System.out.print(Arrays.toString(names.toArray()));
-
-
-
-    }
 }

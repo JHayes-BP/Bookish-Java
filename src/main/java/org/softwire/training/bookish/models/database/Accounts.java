@@ -9,6 +9,17 @@ import java.util.Scanner;
 
 public class Accounts {
 
+
+    public void printIndividualAccount(Scanner sc, Jdbi jdbi){
+        String name =  getQuestionAnswer(sc,"What is your name?");
+        List<Map<String,Object>> allAccountsByName = jdbi.withHandle(handle ->
+                handle.select("select * from accounts where accountName = ?",name)
+                .mapToMap()
+                .list());
+        for (int i = 0 ; i <allAccountsByName.size();i ++){
+            System.out.println(allAccountsByName.get(i));
+        }
+    }
     public void printAccounts(Scanner sc, Jdbi jdbi){
         List<Map<String,Object>> allAccounts = jdbi.withHandle(handle -> handle.createQuery("select * from accounts")
                 .mapToMap()

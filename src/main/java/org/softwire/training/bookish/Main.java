@@ -1,13 +1,11 @@
 package org.softwire.training.bookish;
 
-import com.mysql.jdbc.JDBC4ClientInfoProvider;
 import org.jdbi.v3.core.Jdbi;
 import org.softwire.training.bookish.models.database.Accounts;
 import org.softwire.training.bookish.models.database.Book;
 import org.softwire.training.bookish.models.database.Loans;
 
-import java.sql.*;
-import java.util.List;
+import java.sql.SQLException;
 import java.util.Scanner;
 
 
@@ -29,7 +27,7 @@ public class Main {
 
         while (true) {
             System.out.println("Add book (1) Delete book (2) Edit book (3) View Books (4) View accounts (5)" +
-                    " Add Account (6) Edit Account (7) Check in/out a book (8) ");
+                    " Add Account (6) Edit Account (7) Check account by name (8) Check in/out a book (9) Check on all outgoing loans (10) ");
             String input = sc.nextLine();
             if (input.equals("1")) {
                 bookHandling.addBook(sc, jdbi);
@@ -45,8 +43,12 @@ public class Main {
                 accountHandling.addAccount(sc, jdbi);
             }else if (input.equals("7")) {
                 accountHandling.editAccount(sc, jdbi);
-            }else if (input.equals("8")){
-                loanHandling.bookChecking(sc,jdbi);
+            }else if (input.equals("9")) {
+                loanHandling.bookChecking(sc, jdbi, bookHandling);
+            }else if (input.equals("8")) {
+                accountHandling.printIndividualAccount(sc, jdbi);
+            }else if (input.equals("10")){
+                loanHandling.displayLoans(sc,jdbi);
             } else {
                 break;
             }

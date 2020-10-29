@@ -39,7 +39,7 @@ public class Book {
         jdbi.withHandle(handle -> handle.execute(s, bookName, author));
     }
 
-    private void addCopy(Scanner sc, Jdbi jdbi) {
+    public void addCopy(Scanner sc, Jdbi jdbi) {
         String bookId = getBookId(sc, jdbi);
         String copies = getQuestionAnswer(sc,"How many copies do you want to add?");
         jdbi.withHandle(handle ->
